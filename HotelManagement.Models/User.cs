@@ -5,7 +5,7 @@
         {
             public string Name { get; set; }
             public string Email { get; set; }
-            public string ProfileUrl { get; set; }
+            public string ProfilePic { get; set; }
 
             public string PhoneNumber { get; set; }
             public string AadhaarId { get; set; }
