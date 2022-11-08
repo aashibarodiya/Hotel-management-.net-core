@@ -50,5 +50,11 @@ namespace HotelManagement.API.Controllers
             return Ok(user);
         }
 
+        // get user details by email id
+        [HttpGet("{email}")]
+        public async Task<IActionResult> getUser(string email)
+        {
+            return Ok();
+        }
     }
 }
