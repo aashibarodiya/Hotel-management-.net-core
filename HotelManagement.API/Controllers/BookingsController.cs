@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HotelManagement.Models;
+using HotelManagement.Services.BookingService;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagement.API.Controllers
 {
@@ -6,9 +8,21 @@ namespace HotelManagement.API.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
-        public BookingsController()
+        private readonly IBookingService bookingService;
+
+        public BookingsController(IBookingService bookingService)
+        {
+            this.bookingService = bookingService;
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] Booking booking)
         {
 
+           
+
+            return Ok(booking);
         }
     }
 }

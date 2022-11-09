@@ -1,6 +1,6 @@
 ﻿using HotelManagement.Models;
 
-namespace HotelManagement.Services
+namespace HotelManagement.Services.UserService
 {
     public interface IUserService
     {

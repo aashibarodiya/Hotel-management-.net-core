@@ -1,4 +1,6 @@
+using HotelManagement.Models;
 using HotelManagement.Repository;
+using HotelManagement.Services.UserService;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -32,6 +34,9 @@ namespace HotelManagement.API
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("HotelManagementEF"));
             });
+
+            builder.Services.AddTransient<IUserService, UserServiceV1>();
+            builder.Services.AddTransient<IRepository<User, string>,UserEFRepository>();
            
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

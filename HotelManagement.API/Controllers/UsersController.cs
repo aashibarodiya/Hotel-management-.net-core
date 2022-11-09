@@ -1,6 +1,6 @@
 ﻿using HotelManagement.API.ViewModel;
 using HotelManagement.Models;
-using HotelManagement.Services;
+using HotelManagement.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagement.API.Controllers
@@ -31,7 +31,10 @@ namespace HotelManagement.API.Controllers
                 Name = vm.Name,
                 Email = vm.Email,
                 Password = vm.Password,
-                ProfilePic = vm.ProfilePic
+                ProfilePic = vm.ProfilePic,
+                PhoneNumber = vm.PhoneNumber,
+                AadhaarId = vm.AadhaarId
+                
 
             };
 
@@ -40,7 +43,12 @@ namespace HotelManagement.API.Controllers
         }
 
 
-        // Login User
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="loginInfo"></param>
+        /// <returns></returns>
+        /// 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
         {
@@ -53,8 +61,10 @@ namespace HotelManagement.API.Controllers
         // get user details by email id
         [HttpGet("{email}")]
         public async Task<IActionResult> getUser(string email)
-        {
-            return Ok();
+        { 
+            var user = await userService.GetUserByEmail(email);
+
+            return Ok(user);
         }
     }
 }
