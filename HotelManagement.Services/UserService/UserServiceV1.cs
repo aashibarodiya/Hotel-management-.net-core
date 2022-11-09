@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HotelManagement.Services
+namespace HotelManagement.Services.UserService
 {
     public class UserServiceV1 : IUserService
     {
         private readonly IRepository<User, string> repository;
 
-        public UserServiceV1(IRepository<User,string> repository)
+        public UserServiceV1(IRepository<User, string> repository)
         {
             this.repository = repository;
         }
@@ -30,7 +30,7 @@ namespace HotelManagement.Services
 
         public async Task<User> GetUserByEmail(string email)
         {
-            var user= await repository.GetByEmail(email);
+            var user = await repository.GetByEmail(email);
             return user ?? throw new InvalidIdException(email);
         }
 

@@ -1,6 +1,6 @@
 ﻿using HotelManagement.API.ViewModel;
 using HotelManagement.Models;
-using HotelManagement.Services;
+using HotelManagement.Services.UserService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelManagement.API.Controllers
@@ -9,15 +9,21 @@ namespace HotelManagement.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        // Declaring user service
         private readonly IUserService userService;
 
+        // Constructor for UsersController with dependency injection of userService
         public UsersController(IUserService userService)
         {
             this.userService = userService;
         }
 
 
-        // Register User 
+        /// <summary>
+        /// API Register method takes user properties and add user to the users table
+        /// </summary>
+        /// <param name="vm"></param>
+        /// <returns>user</returns>
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserViewModel vm)
         {
@@ -31,7 +37,10 @@ namespace HotelManagement.API.Controllers
                 Name = vm.Name,
                 Email = vm.Email,
                 Password = vm.Password,
-                ProfilePic = vm.ProfilePic
+                ProfilePic = vm.ProfilePic,
+                PhoneNumber = vm.PhoneNumber,
+                AadhaarId = vm.AadhaarId
+                
 
             };
 
@@ -40,7 +49,12 @@ namespace HotelManagement.API.Controllers
         }
 
 
-        // Login User
+        /// <summary>
+        /// API Login method takes login info and invoking login method in user service
+        /// </summary>
+        /// <param name="loginInfo"></param>
+        /// <returns>user</returns>
+        /// 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
         {
@@ -50,11 +64,17 @@ namespace HotelManagement.API.Controllers
             return Ok(user);
         }
 
-        // get user details by email id
+        /// <summary>
+        /// API getUser method takes user email and get user details from user service
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns>user</returns>
         [HttpGet("{email}")]
         public async Task<IActionResult> getUser(string email)
-        {
-            return Ok();
+        { 
+            var user = await userService.GetUserByEmail(email);
+
+            return Ok(user);
         }
     }
 }
