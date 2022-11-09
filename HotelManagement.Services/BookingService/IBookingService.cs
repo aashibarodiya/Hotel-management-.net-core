@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace HotelManagement.Services.BookingService
 {
+    // Interface IBookingService containing method declartions related to Room Bookings.
     public interface IBookingService
     {
         public Task<Booking> AddBooking(Booking booking);
