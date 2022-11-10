@@ -15,7 +15,7 @@ namespace HotelManagement.Repository
     /// layer between the data access layer and the business 
     /// logic layer of an application.
     /// </summary>
-    public class BookingEFRepository : IRepository<Booking, string>
+   
 
     public class BookingEFRepository : IRepository<Booking, int>
 
@@ -55,7 +55,7 @@ namespace HotelManagement.Repository
         /// <returns>booking info</returns>
         /// <exception cref="InvalidIdException">if the booking is not in the bookings table 
         /// exception will be thrown</exception>
-        public async Task<Booking> GetByEmail(string email)
+       
 
         public async Task<Booking> GetById(int id)
 
@@ -67,7 +67,7 @@ namespace HotelManagement.Repository
 
         
         /// <returns>it contains no of entries written to the database</returns>
-        public async Task Remove(string id)
+        
 
         public async Task Remove(int id)
 
