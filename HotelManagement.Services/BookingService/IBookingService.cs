@@ -13,10 +13,12 @@ namespace HotelManagement.Services.BookingService
         //this represents crud operations which return a value
         public Task<Booking> AddBooking(Booking booking);
 
-        public Task DeleteBooking(string id);
+        public Task DeleteBooking(int id);
 
         public Task UpdateBooking(Booking booking);
 
-        public Task<Booking> GetBooking(string id);
+        public Task<Booking> GetBooking(int id);
+
+        public Task<List<Booking>> GetAllBookings();
     }
 }

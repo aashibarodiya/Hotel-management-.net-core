@@ -15,7 +15,7 @@ namespace HotelManagement.Repository
     public interface IRepository<E , I>
     {
         Task<E> Add(E entity);
-        Task<E> GetByEmail(I email);
+        Task<E> GetById(I id);
 
         Task<List<E>> GetAll();
 

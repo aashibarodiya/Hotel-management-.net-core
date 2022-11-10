@@ -11,11 +11,16 @@ namespace HotelManagement.Services.BookingService
 {
     public  class BookingServiceV1  : IBookingService
     {
-        private IRepository<Booking, string> _bookingRepository;
+        private IRepository<Booking, int> _bookingRepository;
+
 
 
         // Constructor with repository dependency injection
         public BookingServiceV1(IRepository<Booking, string> bookingRepository)
+
+
+        public BookingServiceV1(IRepository<Booking, int> bookingRepository)
+
         {
             _bookingRepository = bookingRepository;
         }
@@ -34,16 +39,22 @@ namespace HotelManagement.Services.BookingService
 
 
 
-        public async Task DeleteBooking(string id)
+        public async Task DeleteBooking(int id)
         {
             await _bookingRepository.Remove(id);
         }
 
-
-
-        public async Task<Booking> GetBooking(string id)
+        public async Task<List<Booking>> GetAllBookings()
         {
-            var booking = await _bookingRepository.GetByEmail(id);
+           var bookings=  await _bookingRepository.GetAll();
+
+            return bookings;
+
+        }
+
+        public async Task<Booking> GetBooking(int id)
+        {
+            var booking = await _bookingRepository.GetById(id);
             return booking ?? throw new InvalidIdException(id);
         }
 
