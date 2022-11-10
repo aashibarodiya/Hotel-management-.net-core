@@ -1,7 +1,17 @@
 ﻿using HotelManagement.API.ViewModel;
 using HotelManagement.Models;
 using HotelManagement.Services.UserService;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.Services.WebApi.Jwt;
+using Polly;
+using System.Data;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Authentication;
+using System.Security.Claims;
+using System.Text;
 
 namespace HotelManagement.API.Controllers
 {
@@ -11,11 +21,14 @@ namespace HotelManagement.API.Controllers
     {
         // Declaring user service
         private readonly IUserService userService;
+        IConfiguration configuration;
+        private object _configuration;
 
         // Constructor for UsersController with dependency injection of userService
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IConfiguration configuration)
         {
             this.userService = userService;
+            this.configuration = configuration;
         }
 
 
@@ -56,12 +69,40 @@ namespace HotelManagement.API.Controllers
         /// <returns>user</returns>
         /// 
         [HttpPost("login")]
+       // [ExceptionMapper(ExceptionType = typeof(InvalidCredentialsException), StatusCode = 401)]
         public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
         {
             var user = await userService.Login(loginInfo.Email, loginInfo.Password);
             if (user == null)
                 return BadRequest(new { message="Invalid Credentials !"});
-            return Ok(user);
+           
+
+            var claims = new[] {
+                    new Claim(JwtRegisteredClaimNames.Sub, configuration["Jwt:Subject"]),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                //new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+                    new Claim("Name", user.Name),
+                    new Claim("Email", user.Email),
+                    
+           };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+
+            var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(configuration["Jwt:Issuer"], configuration["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddDays(1), signingCredentials: signIn);
+
+
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+            Console.WriteLine("ok");
+            Console.WriteLine(tokenString);
+            return Ok(new
+            {
+                token = tokenString,
+                user = user
+
+            });
         }
 
         /// <summary>

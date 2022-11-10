@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.0" />
+
     <Compile Update="RoomDetails.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -19,6 +23,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>RoomDetails.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+
   </ItemGroup>
 
 </Project>
