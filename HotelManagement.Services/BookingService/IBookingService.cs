@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace HotelManagement.Services.BookingService
 {
+    // Interface IBookingService containing method declartions related to Room Bookings.
     public interface IBookingService
     {
+        //this represents crud operations which return a value
         public Task<Booking> AddBooking(Booking booking);
 
         public Task DeleteBooking(int id);

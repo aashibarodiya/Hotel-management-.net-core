@@ -15,13 +15,22 @@ namespace HotelManagement.Services.BookingService
 
 
 
+        // Constructor with repository dependency injection
+        public BookingServiceV1(IRepository<Booking, string> bookingRepository)
+
+
         public BookingServiceV1(IRepository<Booking, int> bookingRepository)
+
         {
             _bookingRepository = bookingRepository;
         }
 
 
-
+        /// <summary>
+        /// this calls the repository of add method
+        /// </summary>
+        /// <param name="booking"></param>
+        /// <returns>booking</returns>
         public async Task<Booking> AddBooking(Booking booking)
         {
             await _bookingRepository.Add(booking);

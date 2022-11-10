@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace HotelManagement.Models
 {
+   // Booking class includes the following properties.
     public class Booking
     {
         public int Id { get; set; }

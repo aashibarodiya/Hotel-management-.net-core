@@ -13,12 +13,20 @@ namespace HotelManagement.API.Controllers
     {
         private readonly IBookingService bookingService;
 
+        // Constructor for BookingsController with dependency injection of bookingService.
         public BookingsController(IBookingService bookingService)
         {
             this.bookingService = bookingService;
         }
 
-       
+
+        /// <summary>
+        /// API Create method takes booking instance and add the data to booking table
+        /// </summary>
+        /// <param name="booking"></param>
+        /// <returns>booking object</returns>
+
+     
 
 
         [HttpGet]
@@ -29,9 +37,14 @@ namespace HotelManagement.API.Controllers
             return Ok(result);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BookingVm vm)
         {
+
+            await bookingService.AddBooking(booking);
+            return Ok(booking);
+
             var Bookings= await bookingService.GetAllBookings();
             var totalBookings= Bookings.Count;
 
@@ -55,6 +68,7 @@ namespace HotelManagement.API.Controllers
             }
 
             return BadRequest();
+
         }
 
 
