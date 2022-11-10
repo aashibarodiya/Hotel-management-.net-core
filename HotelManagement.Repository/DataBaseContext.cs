@@ -10,8 +10,14 @@ namespace HotelManagement.Repository
 
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseLazyLoadingProxies();
+        }
 
-       public DbSet<User> Users { get; set; } 
+
+        public DbSet<User> Users { get; set; } 
 
         public DbSet<Booking> Bookings { get; set; }
 

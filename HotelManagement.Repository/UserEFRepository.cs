@@ -30,11 +30,18 @@ namespace HotelManagement.Repository
             return context.Users.ToList();
         }
 
-        public async Task<User> GetByEmail(string email)
+     /*   public async Task<User> GetByEmail(string email)
         {
             var user = await context.Users.FindAsync(email);
 
             return user ?? throw new InvalidIdException(email, $"No User found with id : {email}");
+        }*/
+
+        public async Task<User> GetById(string id)
+        {
+            var user = await context.Users.FindAsync(id);
+
+            return user ?? throw new InvalidIdException(id, $"No User found with id : {id}");
         }
 
         public async Task Remove(string email)
@@ -51,7 +58,7 @@ namespace HotelManagement.Repository
 
         public async Task Update(User entity)
         {
-            var user = await GetByEmail(entity.Email);
+            var user = await GetById(entity.Email);
             if (user != null)
             {
                 

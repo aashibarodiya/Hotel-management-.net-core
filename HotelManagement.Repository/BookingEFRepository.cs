@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HotelManagement.Repository
 {
-    public class BookingEFRepository : IRepository<Booking, string>
+    public class BookingEFRepository : IRepository<Booking, int>
     {
         private readonly DataBaseContext context;
 
@@ -26,6 +26,7 @@ namespace HotelManagement.Repository
         public async Task<Booking> Add(Booking entity)
         {
             await context.Bookings.AddAsync(entity);
+            await context.SaveChangesAsync();
             return entity;
         }
 
@@ -35,15 +36,15 @@ namespace HotelManagement.Repository
             return context.Bookings.ToList();
         }
 
-        public async Task<Booking> GetByEmail(string email)
+        public async Task<Booking> GetById(int id)
         {
-            var booking = await context.Bookings.FirstOrDefaultAsync(b => b.UserId == email);
-            return booking ?? throw new InvalidIdException(email);
+            var booking = await context.Bookings.FirstOrDefaultAsync(b => b.Id == id);
+            return booking ?? throw new InvalidIdException(id);
         }
 
-        public async Task Remove(string id)
+        public async Task Remove(int id)
         {
-            var booking = await GetByEmail(id);
+            var booking = await GetById(id);
             if(booking != null)
             {
                 context.Bookings.Remove(booking);
@@ -64,8 +65,6 @@ namespace HotelManagement.Repository
              oldBooking.Price = entity.Price;
 
             await Save();
-
-
 
         }
     }
