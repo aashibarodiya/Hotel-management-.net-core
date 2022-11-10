@@ -21,7 +21,11 @@ namespace HotelManagement.Services.BookingService
         }
 
 
-
+        /// <summary>
+        /// this calls the repository of add method
+        /// </summary>
+        /// <param name="booking"></param>
+        /// <returns>booking</returns>
         public async Task<Booking> AddBooking(Booking booking)
         {
             await _bookingRepository.Add(booking);
