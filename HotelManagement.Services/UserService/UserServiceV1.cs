@@ -30,13 +30,13 @@ namespace HotelManagement.Services.UserService
 
         public async Task<User> GetUserByEmail(string email)
         {
-            var user = await repository.GetByEmail(email);
+            var user = await repository.GetById(email);
             return user ?? throw new InvalidIdException(email);
         }
 
         public async Task<User> Login(string email, string password)
         {
-            var user = await repository.GetByEmail(email);
+            var user = await repository.GetById(email);
             if (user == null)
                 return null;
             if (user.Password == password && user.Email == email)
