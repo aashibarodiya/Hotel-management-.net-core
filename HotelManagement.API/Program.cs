@@ -2,7 +2,10 @@ using HotelManagement.Models;
 using HotelManagement.Repository;
 using HotelManagement.Services.BookingService;
 using HotelManagement.Services.UserService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace HotelManagement.API
@@ -27,7 +30,28 @@ namespace HotelManagement.API
 
             // Adding JWt services Here
 
-           
+            builder
+        .Services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(opt =>
+        {
+
+            opt.RequireHttpsMetadata = false;
+            opt.SaveToken = true;
+            opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            };
+
+
+
+        });
+
 
             // Adding Database context here
 
@@ -56,6 +80,13 @@ namespace HotelManagement.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors(opt =>
+            {
+                opt.AllowAnyHeader();
+                opt.AllowAnyOrigin();
+                opt.AllowAnyMethod();
+            });
 
             app.UseHttpsRedirection();
 
