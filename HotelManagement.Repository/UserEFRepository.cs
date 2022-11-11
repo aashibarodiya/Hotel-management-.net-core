@@ -1,6 +1,8 @@
-﻿using HotelManagement.Models;
+﻿using Castle.Core.Logging;
+using HotelManagement.Models;
 using HotelManagement.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +20,15 @@ namespace HotelManagement.Repository
     {
        
         private readonly DataBaseContext context;
+        private readonly ILogger<UserEFRepository> logger;
 
         /// <summary>
         ///  the constructor calling object to pass in an instance of the context
         /// </summary>
-        public UserEFRepository(DataBaseContext context)
+        public UserEFRepository(DataBaseContext context, ILogger<UserEFRepository> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
         /// <summary>
         /// it saves user entity in the users table
@@ -50,9 +54,18 @@ namespace HotelManagement.Repository
 
         public async Task<User> GetById(string id)
         {
+            logger.LogInformation("Calling GetById in UserEF Repository");
             var user = await context.Users.FindAsync(id);
 
-            return user ?? throw new InvalidIdException(id, $"No User found with id : {id}");
+            if (user!=null)
+                return user;
+
+            else
+            {
+                logger.LogError($"Throwing InvalidId Exception,No user exists with the given id : {id}");
+                throw new InvalidIdException(id, $"No User found with id : {id}");
+            }
+           
         }
 
         /// <summary>
@@ -83,8 +96,6 @@ namespace HotelManagement.Repository
             var user = await GetById(entity.Email);
             if (user != null)
             {
-                
-
                 await context.SaveChangesAsync();
 
             }
