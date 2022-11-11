@@ -1,6 +1,7 @@
 ﻿using HotelManagement.API.ViewModel;
 using HotelManagement.Models;
 using HotelManagement.Services.UserService;
+using HotelManagement.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel;
@@ -17,18 +18,23 @@ namespace HotelManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class UsersController : ControllerBase
     {
         // Declaring user service
         private readonly IUserService userService;
+      
         IConfiguration configuration;
         private object _configuration;
 
         // Constructor for UsersController with dependency injection of userService
-        public UsersController(IUserService userService, IConfiguration configuration)
+        public UsersController(IUserService userService, 
+            IConfiguration configuration
+           )
         {
             this.userService = userService;
             this.configuration = configuration;
+        
         }
 
 
@@ -69,13 +75,13 @@ namespace HotelManagement.API.Controllers
         /// <returns>user</returns>
         /// 
         [HttpPost("login")]
-       // [ExceptionMapper(ExceptionType = typeof(InvalidCredentialsException), StatusCode = 401)]
+        [ExceptionMapper(ExceptionType = typeof(InvalidIdException), StatusCode = 401,Message ="No such user exists")]
         public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
         {
             var user = await userService.Login(loginInfo.Email, loginInfo.Password);
-            if (user == null)
-                return BadRequest(new { message="Invalid Credentials !"});
-           
+
+        
+
 
             var claims = new[] {
                     new Claim(JwtRegisteredClaimNames.Sub, configuration["Jwt:Subject"]),
@@ -103,6 +109,7 @@ namespace HotelManagement.API.Controllers
                 user = user
 
             });
+           
         }
 
         /// <summary>

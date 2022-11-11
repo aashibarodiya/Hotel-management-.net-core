@@ -16,9 +16,6 @@ namespace HotelManagement.Services.BookingService
 
 
         // Constructor with repository dependency injection
-        public BookingServiceV1(IRepository<Booking, string> bookingRepository)
-
-
         public BookingServiceV1(IRepository<Booking, int> bookingRepository)
 
         {

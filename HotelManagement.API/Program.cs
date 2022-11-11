@@ -60,16 +60,12 @@ namespace HotelManagement.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("HotelManagementEF"));
             });
 
-            // Adding Services related to User.
-            builder.Services.AddTransient<IUserService, UserServiceV1>();
-            builder.Services.AddTransient<IRepository<User, string>,UserEFRepository>();
-
-            // Adding Services related to Booking
-            builder.Services.AddTransient<IBookingService, BookingServiceV1>();
-            builder.Services.AddTransient<IRepository<Booking,string>,BookingEFRepository>();
+            // Configuring logging.
+            builder.Host.ConfigureLogging(logging => logging.AddLog4Net("log4net.config"));
+           
 
 
-            //add repository and services to the Service Collection
+            //add repository and services to the Service Collection.
             builder.Services.AddTransient<IUserService, UserServiceV1>();
             builder.Services.AddTransient<IRepository<User, string>,UserEFRepository>();
 

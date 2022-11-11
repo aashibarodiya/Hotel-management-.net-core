@@ -46,19 +46,7 @@ namespace HotelManagement.Repository
         }
 
         
-        /// <param name="email"></param>
-        /// <returns>user which may be null</returns>
-        /// <exception cref="InvalidIdException"></exception>
-        public async Task<User> GetByEmail(string email)
-
-
-     /*   public async Task<User> GetByEmail(string email)
-
-        {
-            var user = await context.Users.FindAsync(email);
-
-            return user ?? throw new InvalidIdException(email, $"No User found with id : {email}");
-        }*/
+        
 
         public async Task<User> GetById(string id)
         {

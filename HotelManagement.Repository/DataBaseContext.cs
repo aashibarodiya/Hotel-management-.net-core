@@ -14,13 +14,6 @@ namespace HotelManagement.Repository
         {
 
         }
-
-
-   
-    // User entity mapped to Users table.
-       public DbSet<User> Users { get; set; }
-        // Booking entity mapped to Bookings table.
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
@@ -28,8 +21,9 @@ namespace HotelManagement.Repository
         }
 
 
-        public DbSet<User> Users { get; set; } 
-
+        // User entity mapped to Users table.
+        public DbSet<User> Users { get; set; }
+        // Booking entity mapped to Bookings table.
         public DbSet<Booking> Bookings { get; set; }
 
     }
