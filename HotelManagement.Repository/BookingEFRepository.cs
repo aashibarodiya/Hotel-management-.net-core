@@ -51,7 +51,7 @@ namespace HotelManagement.Repository
 
 
         
-        /// <param name="email">it saves email in the service and determine</param>
+        /// <param name="id">it saves email in the service and determine</param>
         /// <returns>booking info</returns>
         /// <exception cref="InvalidIdException">if the booking is not in the bookings table 
         /// exception will be thrown</exception>
@@ -81,7 +81,7 @@ namespace HotelManagement.Repository
         }
 
        
-        /// <returns>Price</returns>
+      
         public async Task Save()
         {
             await context.SaveChangesAsync();

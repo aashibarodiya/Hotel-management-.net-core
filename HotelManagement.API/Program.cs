@@ -68,7 +68,10 @@ namespace HotelManagement.API
             builder.Services.AddTransient<IBookingService,BookingServiceV1>();
             
 
-            //add repository and services to the Service Collection
+
+
+
+            //add repository and services to the Service Collection.
             builder.Services.AddTransient<IUserService, UserServiceV1>();
             builder.Services.AddTransient<IRepository<User, string>,UserEFRepository>();
 

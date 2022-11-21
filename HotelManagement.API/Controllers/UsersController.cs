@@ -1,6 +1,7 @@
 ﻿using HotelManagement.API.ViewModel;
 using HotelManagement.Models;
 using HotelManagement.Services.UserService;
+using HotelManagement.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel;
@@ -17,18 +18,27 @@ namespace HotelManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    
     public class UsersController : ControllerBase
     {
         // Declaring user service
         private readonly IUserService userService;
+        // Declaring instance of ILogger.
+        private readonly ILogger<UsersController> logger;
+        // Declaring instance of configuration. 
         IConfiguration configuration;
         private object _configuration;
 
-        // Constructor for UsersController with dependency injection of userService
-        public UsersController(IUserService userService, IConfiguration configuration)
+        // Constructor for UsersController with dependency injection of userService, configuration and logger
+        public UsersController(IUserService userService, 
+            IConfiguration configuration,
+            ILogger<UsersController> logger
+           )
         {
             this.userService = userService;
             this.configuration = configuration;
+            this.logger = logger;
+        
         }
 
 
@@ -40,9 +50,11 @@ namespace HotelManagement.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserViewModel vm)
         {
+            logger.LogInformation("Registering a new user");
             if (string.IsNullOrEmpty(vm.ProfilePic))
             {
                 vm.ProfilePic = "https://img.freepik.com/free-vector/mysterious-mafia-man-smoking-cigarette_52683-34828.jpg?size=338&ext=jpg&ga=GA1.2.1041511529.1663508133";
+                logger.LogWarning("As profile picture is not passed by user, default profile picture is used");
             }
             var user = new User()
             {
@@ -58,7 +70,9 @@ namespace HotelManagement.API.Controllers
             };
 
             await userService.AddUser(user);
+            logger.LogInformation("Registration completed");
             return Ok(new {Name= user.Name , Email=user.Email , ProfilePic = user.ProfilePic});
+            
         }
 
 
@@ -69,13 +83,11 @@ namespace HotelManagement.API.Controllers
         /// <returns>user</returns>
         /// 
         [HttpPost("login")]
-       // [ExceptionMapper(ExceptionType = typeof(InvalidCredentialsException), StatusCode = 401)]
+        [ExceptionMapper(ExceptionType = typeof(InvalidIdException), StatusCode = 401,Message ="No such user exists")]
         public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
         {
+            logger.LogInformation("User trying to login");
             var user = await userService.Login(loginInfo.Email, loginInfo.Password);
-            if (user == null)
-                return BadRequest(new { message="Invalid Credentials !"});
-           
 
             var claims = new[] {
                     new Claim(JwtRegisteredClaimNames.Sub, configuration["Jwt:Subject"]),
@@ -92,17 +104,18 @@ namespace HotelManagement.API.Controllers
 
             var token = new JwtSecurityToken(configuration["Jwt:Issuer"], configuration["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddDays(1), signingCredentials: signIn);
 
-
-
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
             Console.WriteLine("ok");
             Console.WriteLine(tokenString);
+            logger.LogInformation("User logged in");
             return Ok(new
             {
                 token = tokenString,
                 user = user
 
             });
+           
+           
         }
 
         /// <summary>
@@ -112,7 +125,8 @@ namespace HotelManagement.API.Controllers
         /// <returns>user</returns>
         [HttpGet("{email}")]
         public async Task<IActionResult> getUser(string email)
-        { 
+        {
+            logger.LogInformation("Getting user details");
             var user = await userService.GetUserByEmail(email);
 
             return Ok(user);

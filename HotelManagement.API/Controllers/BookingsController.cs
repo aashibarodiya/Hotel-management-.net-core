@@ -42,6 +42,8 @@ namespace HotelManagement.API.Controllers
         public async Task<IActionResult> Create([FromBody] BookingVm vm)
         {
 
+            await bookingService.AddBooking(booking);
+            return Ok(booking);
 
             var Bookings= await bookingService.GetAllBookings();
             var totalBookings= Bookings.Count;

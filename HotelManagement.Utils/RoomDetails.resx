@@ -123,10 +123,6 @@
   </data>
   <data name="TotalRooms" xml:space="preserve">
     <value>25</value>
-
     <comment>Total number of rooms in our hotel</comment>
-
-    <comment>Total Number of Rooms in Hotel</comment>
-
   </data>
 </root>
