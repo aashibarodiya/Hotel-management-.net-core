@@ -12,5 +12,7 @@ namespace HotelManagement.Services.UserService
 
         public Task<User> GetUserByEmail(string email);
         Task<User> Login(string email, string password);
+
+        public Task<List<User>> GetAllUsers();
     }
 }

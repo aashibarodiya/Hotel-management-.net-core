@@ -6,19 +6,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualStudio.Services.WebApi.Jwt;
 using Polly;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
+using InvalidCredentialsException = HotelManagement.Utils.InvalidCredentialsException;
 
 namespace HotelManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    
+    [ExceptionMapper(ExceptionType = typeof(InvalidIdException), StatusCode = 404)]
     public class UsersController : ControllerBase
     {
         // Declaring user service
@@ -30,7 +30,8 @@ namespace HotelManagement.API.Controllers
         private object _configuration;
 
         // Constructor for UsersController with dependency injection of userService, configuration and logger
-        public UsersController(IUserService userService, 
+        public UsersController(
+            IUserService userService,
             IConfiguration configuration,
             ILogger<UsersController> logger
            )
@@ -38,9 +39,12 @@ namespace HotelManagement.API.Controllers
             this.userService = userService;
             this.configuration = configuration;
             this.logger = logger;
-        
-        }
 
+        }
+        /* public UsersController(IUserService userService)
+         {
+             this.userService = userService;
+         }*/
 
         /// <summary>
         /// API Register method takes user properties and add user to the users table
@@ -65,14 +69,14 @@ namespace HotelManagement.API.Controllers
                 ProfilePic = vm.ProfilePic,
                 PhoneNumber = vm.PhoneNumber,
                 AadhaarId = vm.AadhaarId
-                
+
 
             };
 
             await userService.AddUser(user);
             logger.LogInformation("Registration completed");
-            return Ok(new {Name= user.Name , Email=user.Email , ProfilePic = user.ProfilePic});
-            
+            return Ok(new { Name = user.Name, Email = user.Email, ProfilePic = user.ProfilePic });
+
         }
 
 
@@ -83,7 +87,7 @@ namespace HotelManagement.API.Controllers
         /// <returns>user</returns>
         /// 
         [HttpPost("login")]
-        [ExceptionMapper(ExceptionType = typeof(InvalidIdException), StatusCode = 401,Message ="No such user exists")]
+        [ExceptionMapper(ExceptionType = typeof(InvalidCredentialsException), StatusCode = 401, Message = "Invalid password")]
         public async Task<IActionResult> Login([FromBody] LoginInfo loginInfo)
         {
             logger.LogInformation("User trying to login");
@@ -92,10 +96,9 @@ namespace HotelManagement.API.Controllers
             var claims = new[] {
                     new Claim(JwtRegisteredClaimNames.Sub, configuration["Jwt:Subject"]),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                //new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                     new Claim("Name", user.Name),
                     new Claim("Email", user.Email),
-                    
+
            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
@@ -114,22 +117,47 @@ namespace HotelManagement.API.Controllers
                 user = user
 
             });
-           
-           
+
+
         }
 
         /// <summary>
-        /// API getUser method takes user email and get user details from user service
+        /// API GetUser method takes user email and get user details from user service
         /// </summary>
         /// <param name="email"></param>
         /// <returns>user</returns>
         [HttpGet("{email}")]
-        public async Task<IActionResult> getUser(string email)
+        public async Task<IActionResult> GetUser(string email)
         {
             logger.LogInformation("Getting user details");
             var user = await userService.GetUserByEmail(email);
-
+            if (user == null)
+                return NotFound();
             return Ok(user);
+        }
+        /// <summary>
+        /// Api GetAllUsers get all users from user service
+        /// </summary>
+        /// <returns>users or empty data</returns>
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await userService.GetAllUsers();
+            if (users.Count == 0)
+                return NoContent();
+            return Ok(users);
+        }
+        /// <summary>
+        /// validate the email id whether the email is already registered or not
+        /// </summary>
+        /// <returns>user or empty data</returns>
+        [HttpGet("validate/{email}")]
+        public async Task<IActionResult> Validate(string email)
+        {
+            var user = await userService.GetUserByEmail(email);
+            if (user != null)
+                return Ok(user);
+            return NotFound();
         }
     }
 }

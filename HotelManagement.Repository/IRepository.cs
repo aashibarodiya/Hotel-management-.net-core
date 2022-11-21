@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HotelManagement.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,5 +24,6 @@ namespace HotelManagement.Repository
 
         Task Update(E entity);
         Task Save();
+        Task<User> GetByEmail(string email);
     }
 }

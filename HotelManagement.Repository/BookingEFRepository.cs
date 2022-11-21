@@ -49,13 +49,18 @@ namespace HotelManagement.Repository
             return context.Bookings.ToList();
         }
 
+        public Task<User> GetByEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
 
-        
+
+
         /// <param name="id">it saves email in the service and determine</param>
         /// <returns>booking info</returns>
         /// <exception cref="InvalidIdException">if the booking is not in the bookings table 
         /// exception will be thrown</exception>
-       
+
 
         public async Task<Booking> GetById(int id)
 

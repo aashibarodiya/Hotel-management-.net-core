@@ -1,9 +1,9 @@
 ﻿using HotelManagement.Models;
 using HotelManagement.Services.BookingService;
 using Microsoft.AspNetCore.Mvc;
-using System.Resources;
 using HotelManagement.Utils;
 using HotelManagement.API.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelManagement.API.Controllers
 {
@@ -12,11 +12,18 @@ namespace HotelManagement.API.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly IBookingService bookingService;
+        // Declaring instance of ILogger.
+        private readonly ILogger<BookingsController> logger;
+        // Declaring instance of configuration.
+        IConfiguration configuration;
 
         // Constructor for BookingsController with dependency injection of bookingService.
-        public BookingsController(IBookingService bookingService)
+        public BookingsController(IBookingService bookingService, IConfiguration configuration,
+            ILogger<BookingsController> logger)
         {
             this.bookingService = bookingService;
+            this.configuration = configuration;
+            this.logger = logger;
         }
 
 
@@ -26,30 +33,29 @@ namespace HotelManagement.API.Controllers
         /// <param name="booking"></param>
         /// <returns>booking object</returns>
 
-     
+
 
 
         [HttpGet]
         public async Task<IActionResult> GetBookings()
         {
             var result = await bookingService.GetAllBookings();
-
+            if (result.Count == 0)
+                return NoContent();
             return Ok(result);
         }
 
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] BookingVm vm)
         {
-
-            await bookingService.AddBooking(booking);
-            return Ok(booking);
-
-            var Bookings= await bookingService.GetAllBookings();
-            var totalBookings= Bookings.Count;
+            logger.LogInformation("Creating a booking of user");
+            var Bookings = await bookingService.GetAllBookings();
+            var totalBookings = Bookings!.Count;
 
             var totalRooms = RoomDetails.ResourceManager.GetString("TotalRooms");
-            var price =Convert.ToInt32(RoomDetails.ResourceManager.GetString("Price"));
+            var price = Convert.ToInt32(RoomDetails.ResourceManager.GetString("Price"));
 
 
             if (totalBookings < Convert.ToInt32(totalRooms))
@@ -58,14 +64,16 @@ namespace HotelManagement.API.Controllers
                 {
                     UserId = vm.UserId,
                     NumberOfDaysStay = vm.NumberOfDaysStay,
-                    RoomNo = totalBookings + 1,
-                    Price = vm.NumberOfDaysStay * price
-                    
-                 };
+                    Price = vm.NumberOfDaysStay * price,
+                    BookingDate = DateTime.Today
+
+                };
 
                 await bookingService.AddBooking(booking);
-                return Ok(booking);
+                logger.LogInformation("User booking details is created");
+                return Created("", booking);
             }
+
 
             return BadRequest();
 
@@ -75,7 +83,9 @@ namespace HotelManagement.API.Controllers
         [HttpDelete("{bookingId}")]
         public async Task<IActionResult> DeleteBooking(int bookingId)
         {
+            logger.LogInformation("Delete of booking");
             await bookingService.DeleteBooking(bookingId);
+            logger.LogInformation("Room booked by user is deleted");
             return NoContent();
         }
 
@@ -84,17 +94,20 @@ namespace HotelManagement.API.Controllers
         [HttpPut("{bookingId}")]
         public async Task<IActionResult> UpdateBooking([FromBody] BookingVm vm, int bookingId)
         {
+            logger.LogInformation("update of room booking");
             var book = await bookingService.GetBooking(bookingId);
+            if (book == null)
+                return BadRequest();
             var booking = new Booking()
-            {   Id = bookingId,
+            {
+                Id = bookingId,
                 UserId = vm.UserId,
                 NumberOfDaysStay = vm.NumberOfDaysStay,
-                RoomNo = book.RoomNo,
                 Price = vm.NumberOfDaysStay * (Convert.ToInt32(RoomDetails.ResourceManager.GetString("Price")))
             };
 
             await bookingService.UpdateBooking(booking);
-
+            logger.LogInformation("room booking updated by user");
             return Accepted(booking);
 
         }

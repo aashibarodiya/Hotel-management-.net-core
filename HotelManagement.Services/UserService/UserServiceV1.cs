@@ -74,7 +74,7 @@ namespace HotelManagement.Services.UserService
                 logger.LogError("User trying with Invalid Id");
                 throw new InvalidIdException(email);
             }
-         
+
         }
         /// <summary>
         /// The method login fetch user data from repository and checks the parameters passed
@@ -106,7 +106,11 @@ namespace HotelManagement.Services.UserService
             }
 
         }
-
+        public async Task<List<User>> GetAllUsers()
+        {
+            var users = await repository.GetAll();
+            return users;
+        }
         public async Task UpdateUser(User user)
         {
             await Task.CompletedTask;
