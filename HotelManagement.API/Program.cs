@@ -60,6 +60,9 @@ namespace HotelManagement.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("HotelManagementEF"));
             });
 
+            // Configuring log4net here
+            builder.Host.ConfigureLogging(logging => logging.AddLog4Net("log4net.config"));
+
             // Adding Services related to User.
             builder.Services.AddTransient<IUserService, UserServiceV1>();
             builder.Services.AddTransient<IRepository<User, string>,UserEFRepository>();
@@ -103,6 +106,7 @@ namespace HotelManagement.API
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

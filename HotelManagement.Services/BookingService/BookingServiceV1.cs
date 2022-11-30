@@ -1,6 +1,7 @@
 ﻿using HotelManagement.Models;
 using HotelManagement.Repository;
 using HotelManagement.Utils;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +13,19 @@ namespace HotelManagement.Services.BookingService
     public  class BookingServiceV1  : IBookingService
     {
         private IRepository<Booking, int> _bookingRepository;
+        private readonly ILogger<BookingServiceV1> logger;
 
 
 
         // Constructor with repository dependency injection
-        
 
 
-        public BookingServiceV1(IRepository<Booking, int> bookingRepository)
+
+        public BookingServiceV1(IRepository<Booking, int> bookingRepository , ILogger<BookingServiceV1> logger)
 
         {
             _bookingRepository = bookingRepository;
+            this.logger = logger;
         }
 
 

@@ -1,6 +1,8 @@
 ﻿using HotelManagement.Models;
 using HotelManagement.Utils;
+using log4net.Repository.Hierarchy;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,15 +23,17 @@ namespace HotelManagement.Repository
 
     {
         private readonly DataBaseContext context;
+        private readonly ILogger<BookingEFRepository> logger;
 
         /// <summary>
         /// the constructor calling object to pass in an instance of the context
         /// as dependency injection
         /// </summary>
         /// <param name="context"></param>
-        public BookingEFRepository(DataBaseContext context)
+        public BookingEFRepository(DataBaseContext context,ILogger<BookingEFRepository> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
         

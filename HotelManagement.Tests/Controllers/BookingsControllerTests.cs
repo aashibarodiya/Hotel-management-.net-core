@@ -27,7 +27,7 @@ namespace HotelManagement.Tests.Controllers
         private Mock<IBookingService> bookingService;
         private IConfiguration _configuration;
         private ILogger<BookingsController> _logger;
-        // The constructor initializes the instance of booking service, configuration and logger.
+        // The constructor initializes the instance of booking service, configuration and logger 
         public BookingsControllerTests()
         {
             bookingService = new Mock<IBookingService>();
